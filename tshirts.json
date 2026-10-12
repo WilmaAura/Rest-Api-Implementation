@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "name": "Kaos Pendaki",
+    "size": "M",
+    "logo": "Gunung Jawa"
+  },
+  {
+    "id": "2",
+    "name": "Mbak-mbak Jawa",
+    "size": "L",
+    "logo": "Cewek Jawa"
+  },
+  {
+    "id": "3",
+    "name": "Hidup Jokowi",
+    "size": "S",
+    "logo": "Hidup Jokowi"
+  },
+  {
+    "id": "4",
+    "name": "Solo Istimewa",
+    "size": "XL",
+    "logo": "Pecinta Solo}"
+  },
+  {
+    "id": "5",
+    "name": "Sundanese",
+    "size": "M",
+    "logo": "Mbak-mbak Sunda"
+  },
+  {
+    "id": "6",
+    "name": "Kaos Jogja",
+    "size": "L",
+    "logo": "Jogja Istimewa"
+  }
+]

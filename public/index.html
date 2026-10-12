@@ -1,0 +1,53 @@
+<html>  
+<head>  
+    <title>Rest Api</title>  
+</head>
+<body>      
+    <h1>Rest Api Output</h1>  
+    <form id="myForm">
+        <input name="logo" placeholder="Logo" required>
+        <input name="size" placeholder="Size" value="large">
+        <button type="submit">Tambahkan Kaos</button>    
+    </form>
+    
+    <ul id="tshirtList"></ul>
+    <script>    
+    const list = document.getElementById('tshirtList');
+    async function loadTshirts(){
+        const response = await fetch('/tshirt');
+        if (!response.ok) {
+            throw new Error('Could not load the T-shirts');
+        }
+        const tshirts = await response.json();
+        list.replaceChildren(...tshirts.map(tshirt => {
+            const item = document.createElement('li');
+            item.textContent = `${tshirt.logo} - ${tshirt.size}`;
+            return item;
+        }));
+    }
+
+    document.querySelector('#myForm').addEventListener('submit', async event=>{
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const response = await fetch(`/tshirt/${Date.now()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                logo: formData.get('logo'),
+                size: formData.get('size')
+            })
+        });
+
+        if (!response.ok) {
+            alert('Could not add the T-shirt');
+            return;
+        }
+        event.target.reset();
+        await loadTshirts();  
+    });
+    loadTshirts();
+    </script>
+</body>
+</html>
