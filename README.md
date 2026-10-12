@@ -63,7 +63,10 @@ Ganti ID contoh dengan ID lokasi yang valid. Endpoint ongkir memerlukan API key 
 - `.env` — konfigurasi lokal dan API key; jangan dibagikan atau dimasukkan ke Git.
 - [.env.example](./.env.example) — contoh nama konfigurasi tanpa kredensial asli.
 
-Penjelasan lebih rinci tentang cara kerja backend tersedia di [PANDUAN-BACKEND.md](./PANDUAN-BACKEND.md).
+Panduan belajar:
+
+- [PANDUAN-BACKEND.md](./public/PANDUAN-BACKEND.md) — penjelasan backend dan file `index.js`.
+- [PANDUAN-REST-API.md](./public/PANDUAN-REST-API.md) — materi REST API dan alur merancang serta menguji endpoint.
 
 ## Catatan
 
