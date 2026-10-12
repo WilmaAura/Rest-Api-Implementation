@@ -104,6 +104,63 @@ h2 {
     gap: 1rem;
 }
 
+.shipping-panel {
+    margin-top: 1rem;
+}
+
+.panel-description {
+    margin: -0.7rem 0 1.2rem;
+    color: var(--color-midnight);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+.shipping-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 0.7fr) minmax(145px, 0.8fr) auto;
+    align-items: end;
+    gap: 0.85rem;
+}
+
+.shipping-form button {
+    white-space: nowrap;
+}
+
+.form-message {
+    margin: 1rem 0 0;
+    color: var(--color-midnight);
+    font-size: var(--font-size-sm);
+}
+
+.shipping-results {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.shipping-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgb(18 44 79 / 14%);
+    border-radius: var(--border-radius-md);
+    background: rgb(91 136 178 / 8%);
+}
+
+.shipping-result strong {
+    color: var(--color-midnight);
+}
+
+.shipping-result span {
+    color: var(--color-noir);
+    font-size: var(--font-size-sm);
+    text-align: right;
+}
+
 label {
     display: grid;
     gap: 0.5rem;
@@ -224,7 +281,35 @@ button:focus-visible {
         grid-column: 1 / -1;
     }
 
+    .shipping-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .shipping-form button {
+        grid-column: 1 / -1;
+    }
+
     .tshirt-list {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 420px) {
+    .shipping-form {
+        grid-template-columns: 1fr;
+    }
+
+    .shipping-form button {
+        grid-column: auto;
+    }
+
+    .shipping-result {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .shipping-result span {
+        text-align: left;
     }
 }

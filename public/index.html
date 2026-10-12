@@ -1,32 +1,107 @@
-<html>  
-<head>  
-    <title>Rest Api</title>  
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Koleksi Kaos</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
-<body>      
-    <h1>Rest Api Output</h1>  
-    <form id="myForm">
-        <input name="logo" placeholder="Logo" required>
-        <input name="size" placeholder="Size" value="large">
-        <button type="submit">Tambahkan Kaos</button>    
-    </form>
-    
-    <ul id="tshirtList"></ul>
-    <script>    
+<body>
+    <main class="page">
+        <header class="page-header">
+            <p class="eyebrow">KATALOG TOKO</p>
+            <h1>Koleksi Kaos</h1>
+            <p class="intro">Lihat koleksi yang tersedia atau tambahkan desain kaos baru.</p>
+        </header>
+
+        <section class="panel" aria-labelledby="form-title">
+            <h2 id="form-title">Tambah kaos</h2>
+            <form id="myForm" class="tshirt-form">
+                <label>
+                    Logo atau desain
+                    <input name="logo" placeholder="Contoh: Gunung Jawa" required>
+                </label>
+                <label>
+                    Ukuran
+                    <select name="size">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L" selected>L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </label>
+                <button type="submit">Tambahkan kaos</button>
+            </form>
+        </section>
+
+        <section class="panel shipping-panel" aria-labelledby="shipping-title">
+            <h2 id="shipping-title">Cek ongkos kirim</h2>
+            <p class="panel-description">
+                Masukkan ID lokasi tujuan dari RajaOngkir. Berat dalam gram.
+            </p>
+            <form id="shippingForm" class="shipping-form">
+                <label>
+                    ID lokasi tujuan
+                    <input name="destination" inputmode="numeric" pattern="[0-9]+" placeholder="Contoh: 12345" required>
+                </label>
+                <label>
+                    Berat (gram)
+                    <input name="weight" type="number" min="1" step="1" value="500" required>
+                </label>
+                <label>
+                    Kurir
+                    <select name="courier" required>
+                        <option value="jne">JNE</option>
+                        <option value="pos">POS Indonesia</option>
+                        <option value="tiki">TIKI</option>
+                        <option value="jnt">J&amp;T</option>
+                    </select>
+                </label>
+                <button type="submit">Cek ongkir</button>
+            </form>
+            <p id="shippingMessage" class="form-message" role="status" aria-live="polite"></p>
+            <ul id="shippingResults" class="shipping-results"></ul>
+        </section>
+
+        <section class="collection" aria-labelledby="collection-title">
+            <div class="section-heading">
+                <h2 id="collection-title">Daftar kaos</h2>
+                <span class="section-note">Koleksi tersimpan</span>
+            </div>
+            <ul id="tshirtList" class="tshirt-list"></ul>
+        </section>
+    </main>
+    <script>
     const list = document.getElementById('tshirtList');
-    async function loadTshirts(){
+    const shippingForm = document.getElementById('shippingForm');
+    const shippingMessage = document.getElementById('shippingMessage');
+    const shippingResults = document.getElementById('shippingResults');
+
+    async function loadTshirts() {
         const response = await fetch('/tshirt');
         if (!response.ok) {
-            throw new Error('Could not load the T-shirts');
+            throw new Error('Gagal memuat daftar kaos.');
         }
+
         const tshirts = await response.json();
         list.replaceChildren(...tshirts.map(tshirt => {
             const item = document.createElement('li');
-            item.textContent = `${tshirt.logo} - ${tshirt.size}`;
+            item.className = 'tshirt-card';
+
+            const logo = document.createElement('span');
+            logo.className = 'tshirt-logo';
+            logo.textContent = tshirt.logo;
+
+            const size = document.createElement('span');
+            size.className = 'tshirt-size';
+            size.textContent = `Ukuran ${tshirt.size}`;
+
+            item.append(logo, size);
             return item;
         }));
     }
 
-    document.querySelector('#myForm').addEventListener('submit', async event=>{
+    document.querySelector('#myForm').addEventListener('submit', async event => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const response = await fetch(`/tshirt/${Date.now()}`, {
@@ -41,13 +116,77 @@
         });
 
         if (!response.ok) {
-            alert('Could not add the T-shirt');
+            alert('Gagal menambahkan kaos.');
             return;
         }
+
         event.target.reset();
-        await loadTshirts();  
+        await loadTshirts();
     });
-    loadTshirts();
+
+    shippingForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const formData = new FormData(shippingForm);
+        shippingMessage.textContent = 'Sedang menghitung ongkir...';
+        shippingResults.replaceChildren();
+
+        try {
+            const response = await fetch('/shipping/cost', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    destination: formData.get('destination'),
+                    weight: Number(formData.get('weight')),
+                    courier: formData.get('courier')
+                })
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Gagal menghitung ongkir.');
+            }
+
+            const services = Array.isArray(result.data) ? result.data : [];
+            if (services.length === 0) {
+                shippingMessage.textContent = 'Tidak ada layanan ongkir yang ditemukan.';
+                return;
+            }
+
+            const rupiah = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+            });
+
+            shippingResults.replaceChildren(...services.map(service => {
+                const item = document.createElement('li');
+                item.className = 'shipping-result';
+
+                const serviceName = document.createElement('strong');
+                serviceName.textContent = [service.name || service.code, service.service]
+                    .filter(Boolean)
+                    .join(' - ');
+
+                const detail = document.createElement('span');
+                const price = Number(service.cost);
+                detail.textContent = [
+                    Number.isFinite(price) ? rupiah.format(price) : 'Tarif tidak tersedia',
+                    service.etd ? `Estimasi ${service.etd}` : null
+                ].filter(Boolean).join(' · ');
+
+                item.append(serviceName, detail);
+                return item;
+            }));
+            shippingMessage.textContent = 'Pilih layanan yang sesuai:';
+        } catch (error) {
+            shippingMessage.textContent = error.message || 'Terjadi kesalahan saat menghitung ongkir.';
+        }
+    });
+
+    loadTshirts().catch(error => {
+        console.error(error);
+        list.textContent = 'Daftar kaos tidak dapat dimuat. Coba muat ulang halaman.';
+    });
     </script>
 </body>
 </html>

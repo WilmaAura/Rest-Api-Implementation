@@ -21,7 +21,7 @@
     "id": "4",
     "name": "Solo Istimewa",
     "size": "XL",
-    "logo": "Pecinta Solo}"
+    "logo": "Pecinta Solo"
   },
   {
     "id": "5",
@@ -34,5 +34,17 @@
     "name": "Kaos Jogja",
     "size": "L",
     "logo": "Jogja Istimewa"
+  },
+  {
+    "id": "1791795983584",
+    "name": "Shirt with logo Naruto",
+    "size": "L",
+    "logo": "Naruto"
+  },
+  {
+    "id": "1791806539331",
+    "name": "Shirt with logo Hinata Hyuga",
+    "size": "S",
+    "logo": "Hinata Hyuga"
   }
 ]
